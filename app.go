@@ -1,25 +1,46 @@
 package giocomp
 
 import (
-	"math/rand"
 	"os"
-	"strconv"
-	"time"
 
 	"gioui.org/app"
-	"gioui.org/font/gofont"
+	"gioui.org/io/event"
 	"gioui.org/io/system"
-	"gioui.org/layout"
-	"gioui.org/op"
-	"gioui.org/widget"
-	"gioui.org/widget/material"
 	"git.sr.ht/~gioverse/skel/scheduler"
 	"git.sr.ht/~gioverse/skel/window"
-	"github.com/npillmayer/giocomp/components/counter"
-	"github.com/npillmayer/giocomp/html"
 )
 
-func Run() {
+// Example modified from:
+// https://git.sr.ht/~gioverse/skel/tree/main/item/example/readme/windower/windower.go
+
+type Application interface {
+	HandleEvent(event.Event)
+	Layout()
+}
+
+type ApplicationRunner struct {
+	application Application
+}
+
+func (runner ApplicationRunner) MainLoop(w *app.Window, conn scheduler.Connection) error {
+	for {
+		select {
+		case event := <-w.Events():
+			switch event := event.(type) {
+			case system.DestroyEvent:
+				return event.Err
+			case system.FrameEvent:
+				runner.application.HandleEvent(event) // handle frame events
+				runner.application.Layout()           // then lay out UI tree
+			}
+		case update := <-conn.Output():
+			// handle any requests to modify the window that came over the bus.
+			window.Update(w, update)
+		}
+	}
+}
+
+func Run(application Application) {
 	bus := scheduler.NewWorkerPool()
 	w := window.NewWindower(bus)
 	go func() {
@@ -27,14 +48,16 @@ func Run() {
 		w.Run()
 		os.Exit(0)
 	}()
-	//window.NewWindow(bus, loop)
-	window.NewWindow(bus, MainLoop)
+	runner := ApplicationRunner{application: application}
+	window.NewWindow(bus, runner.MainLoop)
 	app.Main()
 }
 
+/*
 func MainLoop(w *app.Window, conn scheduler.Connection) error {
-	dom := html.NewDOM(op.Ops{}, material.NewTheme(gofont.Collection()))
-	var mycount int = 77
+	dom := html.NewDOM()
+	var countDomainObject int = 1
+	countDelegate := counter.New().Bind(&countDomainObject)
 	for {
 		select {
 		case event := <-w.Events():
@@ -42,82 +65,19 @@ func MainLoop(w *app.Window, conn scheduler.Connection) error {
 			case system.DestroyEvent:
 				return event.Err
 			case system.FrameEvent:
-				// Lay out the UI here
-				dom.ForEvent(event).Body(
-					html.H1().Text("Hello"),
-					html.H2().Text("World"),
-					counter.Counter().Bind(&mycount),
+				// handle events
+				dom.ForEvent(event).Handle(countDelegate)
+				// lay out UI tree
+				dom.Body(
+					html.H1().Text("Counter"),
+					html.P().Text("This is an example app for a trivial counter"),
+					counter.Counter(countDelegate),
 				)
-				//,
-				//counter.Counter().Bind(&mycount))
 			}
 		case update := <-conn.Output():
-			// Handle any requests to modify the window that came over the bus.
+			// handle any requests to modify the window that came over the bus.
 			window.Update(w, update)
-			// Check for application state updates and handle them.
-			switch update := update.(type) {
-			case NewNumberEvent:
-				_ = int(update) // TODO
-				w.Invalidate()
-			}
 		}
 	}
 }
-
-type NewNumberEvent int
-
-func loop(w *app.Window, conn scheduler.Connection) error {
-	th := material.NewTheme(gofont.Collection())
-	var (
-		ops            op.Ops
-		add, newWindow widget.Clickable
-	)
-	currentNumber := 5
-
-	for {
-		select {
-		case event := <-w.Events():
-			switch event := event.(type) {
-			case system.DestroyEvent:
-				return event.Err
-			case system.FrameEvent:
-				if add.Clicked() {
-					// Schedule asynchronous work to fetch an new number. In real applications,
-					// these are often expensive and blocking operations.
-					conn.Schedule(func() interface{} {
-						// Sleep to simulate expensive work like database
-						// interactions, I/O, etc...
-						time.Sleep(time.Millisecond * 200)
-						return NewNumberEvent(rand.Intn(100) + 1)
-					})
-				}
-				if newWindow.Clicked() {
-					// Launch a new window running another copy of this event
-					// loop.
-					window.NewWindow(conn, loop)
-				}
-				// Lay out the UI here
-				gtx := layout.NewContext(&ops, event)
-				layout.Flex{
-					Axis: layout.Vertical,
-				}.Layout(gtx,
-					layout.Rigid(
-						material.H1(th, strconv.Itoa(currentNumber)).Layout,
-					),
-					layout.Rigid(material.Button(th, &add, "Add").Layout),
-					layout.Rigid(material.Button(th, &newWindow, "New Window").Layout),
-				)
-				event.Frame(&ops)
-			}
-		case update := <-conn.Output():
-			// Handle any requests to modify the window that came over the bus.
-			window.Update(w, update)
-			// Check for application state updates and handle them.
-			switch update := update.(type) {
-			case NewNumberEvent:
-				currentNumber += int(update)
-				w.Invalidate()
-			}
-		}
-	}
-}
+*/

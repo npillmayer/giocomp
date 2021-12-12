@@ -1,14 +1,15 @@
 package html
 
 import (
-	"fmt"
 	"image/color"
 
 	"gioui.org/font/gofont"
+	"gioui.org/io/event"
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
 	"gioui.org/widget/material"
+	"github.com/npillmayer/giocomp/components"
 )
 
 var Theme = material.NewTheme(gofont.Collection())
@@ -36,38 +37,39 @@ func (canvas Canvas) Context() layout.Context {
 
 type DOMLayout struct {
 	ops   op.Ops
-	event system.FrameEvent
-	//theme *material.Theme
+	event event.Event
 }
 
-func NewDOM(ops op.Ops, theme *material.Theme) *DOMLayout {
-	fmt.Println("@@@ new DOM")
+func NewDOM() *DOMLayout {
 	return &DOMLayout{
-		ops: ops,
-		//theme: theme,
+		ops: op.Ops{},
 	}
 }
 
-func (dom *DOMLayout) ForEvent(event system.FrameEvent) *DOMLayout {
-	dom.event = event
-	fmt.Println("@@@ for event")
+func (dom *DOMLayout) ForEvent(ev event.Event) *DOMLayout {
+	dom.event = ev
+	return dom
+}
+
+func (dom *DOMLayout) Handle(targets ...components.EventTarget) *DOMLayout {
+	for _, t := range targets {
+		t.Event(dom.event)
+	}
 	return dom
 }
 
 func (dom *DOMLayout) Body(elements ...layout.Widget) {
-	gtx := layout.NewContext(&dom.ops, dom.event)
-	s := make([]layout.FlexChild, len(elements))
-	for i, e := range elements {
-		s[i] = layout.Rigid(e)
+	ev, ok := dom.event.(system.FrameEvent)
+	if !ok {
+		return
 	}
-	fmt.Println("@@@ BODY")
+	gtx := layout.NewContext(&dom.ops, ev)
+	flexKids := make([]layout.FlexChild, len(elements))
+	for i, e := range elements {
+		flexKids[i] = layout.Rigid(e)
+	}
 	layout.Flex{
 		Axis: layout.Vertical,
-	}.Layout(gtx,
-		// layout.Rigid(
-		// 	material.H1(Theme, "Hello").Layout,
-		// ),
-		s...,
-	)
-	dom.event.Frame(&dom.ops)
+	}.Layout(gtx, flexKids...)
+	ev.Frame(&dom.ops)
 }

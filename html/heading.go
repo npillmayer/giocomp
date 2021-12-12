@@ -1,7 +1,6 @@
 package html
 
 import (
-	"fmt"
 	"image/color"
 
 	"gioui.org/layout"
@@ -21,6 +20,10 @@ func H2() HeadingStyler {
 	return HeadingStyler{level: 2}
 }
 
+func Title() HeadingStyler {
+	return HeadingStyler{level: 0}
+}
+
 func (lsty HeadingStyler) Class(cssClass string) HeadingStyler {
 	lsty.color = color.NRGBA{R: 230}
 	return lsty
@@ -29,15 +32,17 @@ func (lsty HeadingStyler) Class(cssClass string) HeadingStyler {
 func (lsty HeadingStyler) Text(txt string) layout.Widget {
 	level := lsty.level
 	color := lsty.color
-	fmt.Printf("@@@ header level = %d\n", level)
 	return func(gtx layout.Context) layout.Dimensions {
 		var label material.LabelStyle
-		fmt.Printf("@@@ => header level = %d\n", level)
 		switch level {
-		case 1:
+		case 0:
 			label = material.H1(Theme, txt)
-		case 2:
+		case 1:
 			label = material.H2(Theme, txt)
+		case 2:
+			label = material.H3(Theme, txt)
+		default:
+			label = material.H4(Theme, txt)
 		}
 		if color != noColor {
 			label.Color = color
