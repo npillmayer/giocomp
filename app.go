@@ -23,6 +23,7 @@ type ApplicationRunner struct {
 }
 
 func (runner ApplicationRunner) MainLoop(w *app.Window, conn scheduler.Connection) error {
+	runner.application.HandleEvent(ConnectEvent{conn})
 	for {
 		select {
 		case event := <-w.Events():
@@ -40,7 +41,7 @@ func (runner ApplicationRunner) MainLoop(w *app.Window, conn scheduler.Connectio
 	}
 }
 
-func Run(application Application) {
+func Run(application Application, opts ...app.Option) {
 	bus := scheduler.NewWorkerPool()
 	w := window.NewWindower(bus)
 	go func() {
@@ -49,35 +50,17 @@ func Run(application Application) {
 		os.Exit(0)
 	}()
 	runner := ApplicationRunner{application: application}
-	window.NewWindow(bus, runner.MainLoop)
+	window.NewWindow(bus, runner.MainLoop, opts...)
 	app.Main()
 }
 
-/*
-func MainLoop(w *app.Window, conn scheduler.Connection) error {
-	dom := html.NewDOM()
-	var countDomainObject int = 1
-	countDelegate := counter.New().Bind(&countDomainObject)
-	for {
-		select {
-		case event := <-w.Events():
-			switch event := event.(type) {
-			case system.DestroyEvent:
-				return event.Err
-			case system.FrameEvent:
-				// handle events
-				dom.ForEvent(event).Handle(countDelegate)
-				// lay out UI tree
-				dom.Body(
-					html.H1().Text("Counter"),
-					html.P().Text("This is an example app for a trivial counter"),
-					counter.Counter(countDelegate),
-				)
-			}
-		case update := <-conn.Output():
-			// handle any requests to modify the window that came over the bus.
-			window.Update(w, update)
-		}
-	}
+type ConnectEvent struct {
+	conn scheduler.Connection
 }
-*/
+
+// ImplementsEvent is a marker interface in io.event.
+func (cev ConnectEvent) ImplementsEvent() {}
+
+func (cev ConnectEvent) Connection() scheduler.Connection {
+	return cev.conn
+}

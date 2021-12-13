@@ -1,13 +1,16 @@
 package html
 
 import (
+	"fmt"
 	"image/color"
 
 	"gioui.org/layout"
 	"gioui.org/widget/material"
+	"github.com/npillmayer/giocomp/html/css"
 )
 
 type HeadingStyler struct {
+	css.Stylable
 	level int
 	color color.NRGBA
 }
@@ -24,29 +27,35 @@ func Title() HeadingStyler {
 	return HeadingStyler{level: 0}
 }
 
-func (lsty HeadingStyler) Class(cssClass string) HeadingStyler {
-	lsty.color = color.NRGBA{R: 230}
-	return lsty
+func (h HeadingStyler) Class(cssClass string) HeadingStyler {
+	if cssClass == "highlight" {
+		h.color = color.NRGBA{R: 180, A: 255}
+	} else {
+		fmt.Printf("@ applying CSS class %q on H\n", cssClass)
+		h.Stylable = css.Apply(h.Stylable, cssClass, Theme)
+	}
+	return h
 }
 
-func (lsty HeadingStyler) Text(txt string) layout.Widget {
-	level := lsty.level
-	color := lsty.color
-	return func(gtx layout.Context) layout.Dimensions {
+func (h HeadingStyler) Text(txt string) layout.Widget {
+	level := h.level
+	color := h.color
+	heading := func(gtx layout.Context) layout.Dimensions {
 		var label material.LabelStyle
 		switch level {
 		case 0:
-			label = material.H1(Theme, txt)
+			label = material.H1(Theme.Material(), txt)
 		case 1:
-			label = material.H2(Theme, txt)
+			label = material.H2(Theme.Material(), txt)
 		case 2:
-			label = material.H3(Theme, txt)
+			label = material.H3(Theme.Material(), txt)
 		default:
-			label = material.H4(Theme, txt)
+			label = material.H4(Theme.Material(), txt)
 		}
 		if color != noColor {
 			label.Color = color
 		}
 		return label.Layout(gtx)
 	}
+	return h.Styled(heading)
 }

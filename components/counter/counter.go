@@ -6,6 +6,7 @@ import (
 
 	"gioui.org/io/event"
 	"gioui.org/layout"
+	"github.com/npillmayer/giocomp"
 	"github.com/npillmayer/giocomp/components"
 	"github.com/npillmayer/giocomp/html"
 )
@@ -14,6 +15,7 @@ import (
 
 type CounterDelegate struct {
 	*components.Clickable
+	components.Worker
 	count *int
 }
 
@@ -30,6 +32,10 @@ func (c *CounterDelegate) Event(ev event.Event) {
 		fmt.Printf("@ counter received event %#v\n", ev)
 		*c.count++
 	}
+	switch e := ev.(type) {
+	case giocomp.ConnectEvent:
+		c.Connect(e.Connection())
+	}
 }
 
 func (c *CounterDelegate) Bind(cnt *int) *CounterDelegate {
@@ -37,15 +43,15 @@ func (c *CounterDelegate) Bind(cnt *int) *CounterDelegate {
 	return c
 }
 
-func (c CounterDelegate) Value() string {
+func (c *CounterDelegate) Value() string {
 	return strconv.Itoa(*c.count) // do something display-related to domain object
 }
 
 // --- Rendering -------------------------------------------------------------
 
 func Counter(c *CounterDelegate) layout.Widget {
-	return html.Div().Class("hbox").Content(
-		html.H2().Text(c.Value()),
-		html.Button().Class("is-primary").Text("Count").Bind(c.Clickable),
+	return html.Div().Class("hbox").Class("boxed").Content(
+		html.H2().Class("spaced").Text(c.Value()),
+		html.Button().Class("spaced").Text("Count").Bind(c.Clickable),
 	)
 }

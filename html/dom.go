@@ -1,6 +1,7 @@
 package html
 
 import (
+	"fmt"
 	"image/color"
 
 	"gioui.org/font/gofont"
@@ -8,30 +9,48 @@ import (
 	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/op"
+	"gioui.org/unit"
+	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"github.com/npillmayer/giocomp/components"
+	"github.com/npillmayer/giocomp/html/css"
 )
 
-var Theme = material.NewTheme(gofont.Collection())
+// --- CSS Theming -----------------------------------------------------------
+
+var materialTheme = material.NewTheme(gofont.Collection())
+
+var Theme = css.NewTheme(materialTheme, css.CSS{
+	"boxed": boxingStyler,
+	"spaced": insetter(layout.Inset{
+		Top:    unit.Dp(0),
+		Right:  unit.Dp(10),
+		Bottom: unit.Dp(0),
+		Left:   unit.Dp(10),
+	}),
+})
 
 var noColor = color.NRGBA{}
+var BlackColor = color.NRGBA{A: 255}
 
-/*
-type Canvas struct {
-	theme *material.Theme
-	gtx   layout.Context
+func boxingStyler(w layout.Widget) layout.Widget {
+	fmt.Println("@ boxing styler")
+	border := widget.Border{
+		Color: BlackColor,
+		Width: unit.Dp(1),
+	}
+	return func(gtx layout.Context) layout.Dimensions {
+		return border.Layout(gtx, w)
+	}
 }
 
-func (canvas Canvas) Theme() *material.Theme {
-	return canvas.theme
+func insetter(margins layout.Inset) css.WidgetStyler {
+	return func(w layout.Widget) layout.Widget {
+		return func(gtx layout.Context) layout.Dimensions {
+			return margins.Layout(gtx, w)
+		}
+	}
 }
-
-func (canvas Canvas) Context() layout.Context {
-	return canvas.gtx
-}
-*/
-
-//type Element func(canvas Canvas) layout.Dimensions
 
 // --- DOM -------------------------------------------------------------------
 
@@ -58,7 +77,11 @@ func (dom *DOMLayout) Handle(targets ...components.EventTarget) *DOMLayout {
 	return dom
 }
 
-func (dom *DOMLayout) Body(elements ...layout.Widget) {
+func (dom *DOMLayout) Body() *DOMLayout {
+	return dom
+}
+
+func (dom *DOMLayout) Content(elements ...layout.Widget) {
 	ev, ok := dom.event.(system.FrameEvent)
 	if !ok {
 		return
@@ -69,7 +92,8 @@ func (dom *DOMLayout) Body(elements ...layout.Widget) {
 		flexKids[i] = layout.Rigid(e)
 	}
 	layout.Flex{
-		Axis: layout.Vertical,
+		Axis:    layout.Vertical,
+		Spacing: layout.SpaceEnd,
 	}.Layout(gtx, flexKids...)
 	ev.Frame(&dom.ops)
 }

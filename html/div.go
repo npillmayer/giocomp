@@ -1,9 +1,11 @@
 package html
 
 import (
+	"fmt"
 	"strings"
 
 	"gioui.org/layout"
+	"github.com/npillmayer/giocomp/html/css"
 )
 
 func Div() _Div {
@@ -13,6 +15,7 @@ func Div() _Div {
 }
 
 type _Div struct {
+	css.Stylable
 	flex     layout.Flex
 	elements []layout.FlexChild
 }
@@ -21,6 +24,9 @@ func (div _Div) Class(cssClass string) _Div {
 	if strings.Contains(cssClass, "hbox") {
 		div.flex.Axis = layout.Horizontal
 		div.flex.Alignment = layout.Middle
+	} else {
+		fmt.Printf("@ applying CSS class %q on DIV\n", cssClass)
+		div.Stylable = css.Apply(div.Stylable, cssClass, Theme)
 	}
 	return div
 }
@@ -31,6 +37,9 @@ func (div _Div) Content(elements ...layout.Widget) layout.Widget {
 		div.elements[i] = layout.Rigid(e)
 	}
 	return func(gtx layout.Context) layout.Dimensions {
-		return div.flex.Layout(gtx, div.elements...)
+		flex := func(gtx layout.Context) layout.Dimensions {
+			return div.flex.Layout(gtx, div.elements...)
+		}
+		return div.Styled(flex)(gtx)
 	}
 }

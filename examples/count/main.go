@@ -1,7 +1,9 @@
 package main
 
 import (
+	"gioui.org/app"
 	"gioui.org/io/event"
+	"gioui.org/unit"
 	"github.com/npillmayer/giocomp"
 	"github.com/npillmayer/giocomp/components/counter"
 	"github.com/npillmayer/giocomp/html"
@@ -22,10 +24,14 @@ func (myapp *myApplication) HandleEvent(ev event.Event) {
 }
 
 func (myapp *myApplication) Layout() {
-	myapp.dom.Body(
+	myapp.dom.Body().Content(
 		html.H1().Text("Counter"),
-		html.P().Text("This is an example app for a trivial counter"),
-		counter.Counter(myapp.countUIControl),
+		html.P().Class("highlight").Text("This is an example app for a trivial counter"),
+		html.Glue(30, 30),
+		html.Div().Class("hbox").Content(
+			counter.Counter(myapp.countUIControl),
+			html.HFill(),
+		),
 	)
 }
 
@@ -37,5 +43,5 @@ func main() {
 		myBO: &myBusinessObject{count: 1},
 	}
 	myapp.countUIControl = counter.New().Bind(&myapp.myBO.count)
-	giocomp.Run(&myapp)
+	giocomp.Run(&myapp, app.Size(unit.Dp(350), unit.Dp(400)))
 }

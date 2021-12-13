@@ -1,31 +1,43 @@
 package html
 
 import (
+	"fmt"
 	"image/color"
 
 	"gioui.org/layout"
 	"gioui.org/widget/material"
+	"github.com/npillmayer/giocomp/html/css"
 )
 
-func P() ParaStyler {
-	return ParaStyler{}
+func P() _P {
+	return _P{
+		bodyText: material.Body1,
+		color:    Theme.Material().Fg,
+	}
 }
 
-type ParaStyler struct {
-	color color.NRGBA
+type _P struct {
+	css.Stylable
+	bodyText func(*material.Theme, string) material.LabelStyle
+	color    color.NRGBA
 }
 
-func (psty ParaStyler) Class(cssClass string) ParaStyler {
-	psty.color = color.NRGBA{R: 230}
-	return psty
+func (p _P) Class(cssClass string) _P {
+	if cssClass == "em" {
+		p.bodyText = material.Body2
+	} else if cssClass == "highlight" {
+		p.color = color.NRGBA{R: 180, A: 255}
+	} else {
+		fmt.Printf("@ applying CSS class %q on P\n", cssClass)
+		p.Stylable = css.Apply(p.Stylable, cssClass, Theme)
+	}
+	return p
 }
 
-func (psty ParaStyler) Text(txt string) layout.Widget {
+func (p _P) Text(txt string) layout.Widget {
 	return func(gtx layout.Context) layout.Dimensions {
-		label := material.Body1(Theme, txt)
-		if psty.color != noColor {
-			label.Color = psty.color
-		}
-		return label.Layout(gtx)
+		label := p.bodyText(Theme.Material(), txt)
+		label.Color = p.color
+		return p.Styled(layout.Widget(label.Layout))(gtx)
 	}
 }

@@ -1,39 +1,46 @@
 package html
 
 import (
+	"fmt"
 	"image/color"
-	"strings"
 
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 	"github.com/npillmayer/giocomp/components"
+	"github.com/npillmayer/giocomp/html/css"
 )
 
-func Button() ButtonStyler {
-	return ButtonStyler{}
+func Button() _Button {
+	return _Button{}
 }
 
-type ButtonStyler struct {
+type _Button struct {
+	css.Stylable
 	isPrimary bool
 	text      string
 }
 
-func (bsty ButtonStyler) Class(cssClass string) ButtonStyler {
-	bsty.isPrimary = strings.Contains(cssClass, "is-primary")
-	return bsty
+func (b _Button) Class(cssClass string) _Button {
+	if cssClass == "is-primary" {
+		b.isPrimary = true
+	} else {
+		fmt.Printf("@ applying CSS class %q on BUTTON\n", cssClass)
+		b.Stylable = css.Apply(b.Stylable, cssClass, Theme)
+	}
+	return b
 }
 
-func (bsty ButtonStyler) Text(txt string) ButtonStyler {
-	bsty.text = txt
-	return bsty
+func (b _Button) Text(txt string) _Button {
+	b.text = txt
+	return b
 }
 
-func (bsty ButtonStyler) Bind(clck *components.Clickable) layout.Widget {
+func (b _Button) Bind(clck *components.Clickable) layout.Widget {
 	return func(gtx layout.Context) layout.Dimensions {
-		button := material.Button(Theme, clck.Clicker(), bsty.text)
-		if !bsty.isPrimary {
-			button.Background = color.NRGBA{R: 120, G: 120, B: 120, A: 0xff}
+		button := material.Button(Theme.Material(), clck.Clicker(), b.text)
+		if !b.isPrimary {
+			button.Background = color.NRGBA{R: 130, G: 130, B: 130, A: 0xff}
 		}
-		return button.Layout(gtx)
+		return b.Styled(button.Layout)(gtx)
 	}
 }
