@@ -1,7 +1,6 @@
 package html
 
 import (
-	"fmt"
 	"image/color"
 
 	"gioui.org/font/gofont"
@@ -34,7 +33,6 @@ var noColor = color.NRGBA{}
 var BlackColor = color.NRGBA{A: 255}
 
 func boxingStyler(w layout.Widget) layout.Widget {
-	fmt.Println("@ boxing styler")
 	border := widget.Border{
 		Color: BlackColor,
 		Width: unit.Dp(1),

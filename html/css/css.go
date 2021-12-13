@@ -1,8 +1,6 @@
 package css
 
 import (
-	"fmt"
-
 	"gioui.org/font/gofont"
 	"gioui.org/layout"
 	"gioui.org/widget/material"
@@ -16,10 +14,8 @@ type CSS map[string]WidgetStyler
 
 func (css CSS) Apply(key string, box Box) Box {
 	if styler, ok := css[key]; ok {
-		fmt.Printf("@ applying style with key %q\n", key)
 		box = box.ApplyStyler(styler)
 	} else {
-		fmt.Printf("@ style for key %q is void\n", key)
 	}
 	return box
 }
@@ -58,7 +54,6 @@ type Stylable struct {
 
 // Apply widget style: wrap any existing styler into a new styler
 func (sty Stylable) ApplyStyler(ws WidgetStyler) Box {
-	fmt.Printf("@ in Styleable.ApplyStyler, styler = %#v\n", sty.styler)
 	if sty.styler == nil {
 		sty.styler = ws
 	} else {

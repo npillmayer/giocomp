@@ -1,7 +1,6 @@
 package html
 
 import (
-	"fmt"
 	"image/color"
 
 	"gioui.org/layout"
@@ -28,7 +27,6 @@ func (p _P) Class(cssClass string) _P {
 	} else if cssClass == "highlight" {
 		p.color = color.NRGBA{R: 180, A: 255}
 	} else {
-		fmt.Printf("@ applying CSS class %q on P\n", cssClass)
 		p.Stylable = css.Apply(p.Stylable, cssClass, Theme)
 	}
 	return p

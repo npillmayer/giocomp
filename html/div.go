@@ -1,7 +1,6 @@
 package html
 
 import (
-	"fmt"
 	"strings"
 
 	"gioui.org/layout"
@@ -21,11 +20,10 @@ type _Div struct {
 }
 
 func (div _Div) Class(cssClass string) _Div {
-	if strings.Contains(cssClass, "hbox") {
+	if strings.Contains(cssClass, "level") {
 		div.flex.Axis = layout.Horizontal
 		div.flex.Alignment = layout.Middle
 	} else {
-		fmt.Printf("@ applying CSS class %q on DIV\n", cssClass)
 		div.Stylable = css.Apply(div.Stylable, cssClass, Theme)
 	}
 	return div

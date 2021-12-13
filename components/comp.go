@@ -2,25 +2,12 @@ package components
 
 import (
 	"sync"
-	"time"
 
-	"gioui.org/app"
 	"gioui.org/io/event"
+	"gioui.org/layout"
 	"gioui.org/widget"
 	"git.sr.ht/~gioverse/skel/scheduler"
 )
-
-type EventTarget interface {
-	Event(event.Event)
-}
-
-type UpdateEvent struct {
-	Value  interface{}
-	Window *app.Window
-}
-
-// ImplementsEvent is a marker for type event.Event
-func (uev UpdateEvent) ImplementsEvent() {}
 
 // --- Clickable -------------------------------------------------------------
 
@@ -36,7 +23,23 @@ func (clck Clickable) Event(ev event.Event) {}
 
 // --- Async -----------------------------------------------------------------
 
+type EventTarget interface {
+	Event(event.Event)
+}
+
+type UpdateEvent struct {
+	Value       interface{}
+	Source      EventTarget
+	Invalidates bool
+}
+
+// ImplementsEvent is a marker for type event.Event
+func (uev UpdateEvent) ImplementsEvent() {}
+
 type InvalidateEvent bool
+
+// ImplementsEvent is a marker for type event.Event
+func (ev InvalidateEvent) ImplementsEvent() {}
 
 type Worker struct {
 	mtx  sync.Mutex
@@ -55,17 +58,33 @@ func (w *Worker) connection() (scheduler.Connection, bool) {
 	return w.conn, w.conn != nil
 }
 
-func (w *Worker) Async(f func()) {
+func (w *Worker) Async(target EventTarget, f func() interface{}) {
 	var conn scheduler.Connection
 	var ok bool
 	if conn, ok = w.connection(); !ok {
 		return
 	}
 	conn.Schedule(func() interface{} {
-		// Sleep to simulate expensive work like database
-		// interactions, I/O, etc...
-		time.Sleep(time.Millisecond * 500)
-		f()
-		return InvalidateEvent(true)
+		return UpdateEvent{
+			Value:       f(),
+			Source:      target,
+			Invalidates: true,
+		}
 	})
+}
+
+// --- Disabled state --------------------------------------------------------
+
+func Enable(cond bool, w layout.Widget) layout.Widget {
+	if w == nil {
+		return nil
+	}
+	if cond {
+		return w
+	}
+	inner := w
+	return func(gtx layout.Context) layout.Dimensions {
+		gtx.Queue = nil
+		return inner(gtx)
+	}
 }

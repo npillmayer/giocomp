@@ -1,7 +1,6 @@
 package html
 
 import (
-	"fmt"
 	"image/color"
 
 	"gioui.org/layout"
@@ -24,7 +23,6 @@ func (b _Button) Class(cssClass string) _Button {
 	if cssClass == "is-primary" {
 		b.isPrimary = true
 	} else {
-		fmt.Printf("@ applying CSS class %q on BUTTON\n", cssClass)
 		b.Stylable = css.Apply(b.Stylable, cssClass, Theme)
 	}
 	return b

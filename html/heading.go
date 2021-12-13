@@ -1,7 +1,6 @@
 package html
 
 import (
-	"fmt"
 	"image/color"
 
 	"gioui.org/layout"
@@ -31,7 +30,6 @@ func (h HeadingStyler) Class(cssClass string) HeadingStyler {
 	if cssClass == "highlight" {
 		h.color = color.NRGBA{R: 180, A: 255}
 	} else {
-		fmt.Printf("@ applying CSS class %q on H\n", cssClass)
 		h.Stylable = css.Apply(h.Stylable, cssClass, Theme)
 	}
 	return h

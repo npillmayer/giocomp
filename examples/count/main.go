@@ -5,7 +5,7 @@ import (
 	"gioui.org/io/event"
 	"gioui.org/unit"
 	"github.com/npillmayer/giocomp"
-	"github.com/npillmayer/giocomp/components/counter"
+	"github.com/npillmayer/giocomp/examples/count/counter"
 	"github.com/npillmayer/giocomp/html"
 )
 
@@ -25,12 +25,14 @@ func (myapp *myApplication) HandleEvent(ev event.Event) {
 
 func (myapp *myApplication) Layout() {
 	myapp.dom.Body().Content(
-		html.H1().Text("Counter"),
-		html.P().Class("highlight").Text("This is an example app for a trivial counter"),
-		html.Glue(30, 30),
-		html.Div().Class("hbox").Content(
-			counter.Counter(myapp.countUIControl),
-			html.HFill(),
+		html.Div().Class("spaced").Content(
+			html.H1().Text("Counter"),
+			html.P().Class("highlight").Text("This is an example app for a trivial counter"),
+			html.Glue(30, 30),
+			html.Div().Class("hbox").Content(
+				counter.Counter(myapp.countUIControl),
+				html.HFill(),
+			),
 		),
 	)
 }

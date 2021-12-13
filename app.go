@@ -8,6 +8,7 @@ import (
 	"gioui.org/io/system"
 	"git.sr.ht/~gioverse/skel/scheduler"
 	"git.sr.ht/~gioverse/skel/window"
+	"github.com/npillmayer/giocomp/components"
 )
 
 // Example modified from:
@@ -37,6 +38,17 @@ func (runner ApplicationRunner) MainLoop(w *app.Window, conn scheduler.Connectio
 		case update := <-conn.Output():
 			// handle any requests to modify the window that came over the bus.
 			window.Update(w, update)
+			switch u := update.(type) {
+			case components.InvalidateEvent:
+				if u {
+					w.Invalidate()
+				}
+			case components.UpdateEvent:
+				runner.application.HandleEvent(u) // handle component events
+				if u.Invalidates {
+					w.Invalidate()
+				}
+			}
 		}
 	}
 }
