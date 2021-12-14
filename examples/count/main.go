@@ -29,7 +29,7 @@ func (myapp *myApplication) Layout() {
 			html.H1().Text("Counter"),
 			html.P().Class("highlight").Text("This is an example app for a trivial counter"),
 			html.Glue(30, 30),
-			html.Div().Class("hbox").Content(
+			html.Div().Class("level").Content(
 				counter.Counter(myapp.countUIControl),
 				html.HFill(),
 			),

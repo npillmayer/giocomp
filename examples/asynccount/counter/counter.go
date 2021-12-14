@@ -34,7 +34,7 @@ func (c *CounterDelegate) Event(ev event.Event) {
 		c.Connect(e.Connection())
 		return
 	case components.UpdateEvent:
-		if e.Source == c {
+		if e.Target == c {
 			*c.count = e.Value.(int)
 			c.working = false
 		}

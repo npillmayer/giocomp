@@ -5,7 +5,7 @@ import (
 	"gioui.org/io/event"
 	"gioui.org/unit"
 	"github.com/npillmayer/giocomp"
-	"github.com/npillmayer/giocomp/examples/slowcount/counter"
+	"github.com/npillmayer/giocomp/examples/asynccount/counter"
 	"github.com/npillmayer/giocomp/html"
 )
 
@@ -29,7 +29,7 @@ func (myapp *myApplication) Layout() {
 			html.H1().Text("Counter"),
 			html.P().Class("highlight").Text("This is an example app for a slow counter"),
 			html.Glue(30, 30),
-			html.Div().Class("hbox").Content(
+			html.Div().Class("level").Content(
 				counter.Counter(myapp.countUIControl),
 				html.HFill(),
 			),

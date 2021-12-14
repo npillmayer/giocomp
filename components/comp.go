@@ -29,7 +29,7 @@ type EventTarget interface {
 
 type UpdateEvent struct {
 	Value       interface{}
-	Source      EventTarget
+	Target      EventTarget
 	Invalidates bool
 }
 
@@ -67,7 +67,7 @@ func (w *Worker) Async(target EventTarget, f func() interface{}) {
 	conn.Schedule(func() interface{} {
 		return UpdateEvent{
 			Value:       f(),
-			Source:      target,
+			Target:      target,
 			Invalidates: true,
 		}
 	})
@@ -84,7 +84,8 @@ func Enable(cond bool, w layout.Widget) layout.Widget {
 	}
 	inner := w
 	return func(gtx layout.Context) layout.Dimensions {
-		gtx.Queue = nil
+		//gtx.Queue = nil
+		gtx = gtx.Disabled()
 		return inner(gtx)
 	}
 }

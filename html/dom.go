@@ -22,9 +22,9 @@ var materialTheme = material.NewTheme(gofont.Collection())
 var Theme = css.NewTheme(materialTheme, css.CSS{
 	"boxed": boxingStyler,
 	"spaced": insetter(layout.Inset{
-		Top:    unit.Dp(0),
+		Top:    unit.Dp(5),
 		Right:  unit.Dp(10),
-		Bottom: unit.Dp(0),
+		Bottom: unit.Dp(5),
 		Left:   unit.Dp(10),
 	}),
 })
