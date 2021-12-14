@@ -3,8 +3,8 @@ package mydomain
 import "fmt"
 
 type Todo struct {
-	Title       string
-	isCompleted bool
+	Title     string
+	Completed bool
 }
 
 func NewTodo(title string) *Todo {
@@ -14,8 +14,4 @@ func NewTodo(title string) *Todo {
 
 func (todo Todo) String() string {
 	return todo.Title
-}
-
-func (todo Todo) IsDone() bool {
-	return todo.isCompleted
 }

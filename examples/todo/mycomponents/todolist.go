@@ -53,6 +53,8 @@ func (l *TodoListDelegate) Event(ev event.Event) {
 	}
 }
 
+//func (l *TodoListDelegate) AdaptTodoDelegatesFromList(todo *mydomain.Todo) {
+//l.todoDelegates = append(l.todoDelegates, NewTodoDelegate(todo))
 func (l *TodoListDelegate) AdaptTodoDelegatesFromList() {
 	todos := l.list.Todos()
 	if len(l.todoDelegates) < len(todos) {
@@ -62,7 +64,10 @@ func (l *TodoListDelegate) AdaptTodoDelegatesFromList() {
 		l.todoDelegates = l.todoDelegates[:len(todos)]
 	}
 	for i := range l.todoDelegates {
-		l.todoDelegates[i] = NewTodoDelegate(todos[i])
+		t := l.todoDelegates[i]
+		if t == nil || t.todo != todos[i] {
+			l.todoDelegates[i] = NewTodoDelegate(todos[i])
+		}
 	}
 }
 

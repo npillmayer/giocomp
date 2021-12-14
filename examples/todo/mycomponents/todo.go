@@ -1,6 +1,10 @@
 package mycomponents
 
 import (
+	"fmt"
+
+	"gioui.org/io/event"
+	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
@@ -16,9 +20,20 @@ type TodoDelegate struct {
 }
 
 func NewTodoDelegate(todo *mydomain.Todo) *TodoDelegate {
-	return &TodoDelegate{
+	t := &TodoDelegate{
 		todo:     todo,
 		checkbox: new(widget.Bool),
+	}
+	t.checkbox.Value = todo.Completed
+	return t
+}
+
+func (t *TodoDelegate) Event(ev event.Event) {
+	if _, ok := ev.(system.FrameEvent); ok {
+		if t.checkbox.Changed() {
+			t.todo.Completed = t.checkbox.Value
+			fmt.Printf("@ completed [%s] = %v\n", t.todo.Title, t.todo.Completed)
+		}
 	}
 }
 
@@ -43,7 +58,7 @@ func Todo(t *TodoDelegate) layout.Widget {
 }
 
 func status(t *TodoDelegate) string {
-	if t.todo.IsDone() {
+	if t.todo.Completed {
 		return "done"
 	}
 	return "active"
