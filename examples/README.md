@@ -4,9 +4,9 @@ Every example has a main program. Each of them will rely on one or more custom c
 
 The nomenclature somewhat resembles the HTML/CSS/JS model. One reason for that is that I find it easier to reason about the workings of Gio thinking of a browser UI. But by no means is the nomenclature relevant for having a user-level component model.
 
-The [count](https://github.com/npillmayer/giocomp/tree/main/examples/count)/[asynccount](https://github.com/npillmayer/giocomp/tree/main/examples/asynccount) examples have trivial functionality. Their purpose is to get a feeling for the challenges of encapsulating components with Gio.
+* The [count](https://github.com/npillmayer/giocomp/tree/main/examples/count)/[asynccount](https://github.com/npillmayer/giocomp/tree/main/examples/asynccount) examples have trivial functionality. Their purpose is to get a feeling for the challenges of encapsulating components with Gio.
 
-The [todo](https://github.com/npillmayer/giocomp/tree/main/examples/todo) example is a re-implementation of an app implemented in the course of [a great Mozilla-tutorial](https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_getting_started) for Svelte. 
+* The [todo](https://github.com/npillmayer/giocomp/tree/main/examples/todo) example is a re-implementation of an app implemented in the course of [a great Mozilla-tutorial](https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_getting_started) for Svelte. 
 
 For each example, subfolders will contain the component's code. Some will as well have a subfolder for “domain objects”, which should never be infected with UI code.
 
