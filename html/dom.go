@@ -15,6 +15,11 @@ import (
 	"github.com/npillmayer/giocomp/html/css"
 )
 
+type (
+	C = layout.Context
+	D = layout.Dimensions
+)
+
 // --- CSS Theming -----------------------------------------------------------
 
 var materialTheme = material.NewTheme(gofont.Collection())
@@ -42,7 +47,7 @@ func boxingStyler(w layout.Widget) layout.Widget {
 	}
 }
 
-func insetter(margins layout.Inset) css.WidgetStyler {
+func insetter(margins layout.Inset) css.WidgetDecorator {
 	return func(w layout.Widget) layout.Widget {
 		return func(gtx layout.Context) layout.Dimensions {
 			return margins.Layout(gtx, w)

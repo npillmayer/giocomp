@@ -1,21 +1,22 @@
 package css
 
 import (
+	"image/color"
+
 	"gioui.org/font/gofont"
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 )
 
 type Box interface {
-	ApplyStyler(WidgetStyler) Box
+	ApplyDecorator(WidgetDecorator) Box
 }
 
-type CSS map[string]WidgetStyler
+type CSS map[string]WidgetDecorator
 
 func (css CSS) Apply(key string, box Box) Box {
 	if styler, ok := css[key]; ok {
-		box = box.ApplyStyler(styler)
-	} else {
+		box = box.ApplyDecorator(styler)
 	}
 	return box
 }
@@ -38,7 +39,7 @@ func NewTheme(th *material.Theme, css CSS) Theme {
 		th = material.NewTheme(gofont.Collection())
 	}
 	if css == nil {
-		css = make(map[string]WidgetStyler)
+		css = make(map[string]WidgetDecorator)
 	}
 	return Theme{
 		material: th,
@@ -49,11 +50,11 @@ func NewTheme(th *material.Theme, css CSS) Theme {
 // --- CSS Styling -----------------------------------------------------------
 
 type Stylable struct {
-	styler WidgetStyler
+	styler WidgetDecorator
 }
 
 // Apply widget style: wrap any existing styler into a new styler
-func (sty Stylable) ApplyStyler(ws WidgetStyler) Box {
+func (sty Stylable) ApplyDecorator(ws WidgetDecorator) Box {
 	if sty.styler == nil {
 		sty.styler = ws
 	} else {
@@ -72,7 +73,7 @@ func (sty Stylable) Styled(w layout.Widget) layout.Widget {
 	return sty.styler(w)
 }
 
-type WidgetStyler func(layout.Widget) layout.Widget
+type WidgetDecorator func(layout.Widget) layout.Widget
 
 var _ Box = &Stylable{}
 
@@ -82,4 +83,23 @@ func Apply(sty Stylable, style string, theme Theme) Stylable {
 		sty.styler = s.styler
 	}
 	return sty
+}
+
+// --- CSS style set ---------------------------------------------------------
+
+type Styles struct {
+	Fg          color.NRGBA
+	Bg          color.NRGBA
+	BorderColor color.NRGBA
+	Border      int
+	Rounded     bool
+	Shaded      bool
+}
+
+func StylesFromTheme(theme Theme) Styles {
+	return Styles{
+		Fg:          theme.material.Fg,
+		Bg:          theme.material.Bg,
+		BorderColor: theme.material.Fg,
+	}
 }

@@ -1,7 +1,5 @@
 package mydomain
 
-import "fmt"
-
 type TodoList struct {
 	todos []*Todo
 }
@@ -22,5 +20,4 @@ func (l TodoList) Todos() []*Todo {
 
 func (l *TodoList) AppendTodo(todo *Todo) {
 	l.todos = append(l.todos, todo)
-	fmt.Printf("@ appending new todo %q\n", todo.Title)
 }

@@ -1,9 +1,8 @@
 package mycomponents
 
 import (
-	"fmt"
-
 	"gioui.org/io/event"
+	"gioui.org/io/system"
 	"gioui.org/layout"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
@@ -17,9 +16,10 @@ import (
 
 type TodoListDelegate struct {
 	components.Worker
-	list          *mydomain.TodoList
-	todoDelegates []*TodoDelegate
-	state         *widget.List
+	filterCompleted bool
+	list            *mydomain.TodoList
+	todoDelegates   map[*mydomain.Todo]*TodoDelegate
+	state           *widget.List
 }
 
 func NewTodoListDelegate(list *mydomain.TodoList) *TodoListDelegate {
@@ -36,62 +36,59 @@ func (l *TodoListDelegate) Event(ev event.Event) {
 	case giocomp.ConnectEvent:
 		l.Connect(e.Connection())
 		return
+	case system.FrameEvent:
+		for _, t := range l.todoDelegates {
+			t.Event(ev)
+		}
 	case components.UpdateEvent:
 		if l.list == nil {
 			return
 		}
 		if e.Target == l {
 			l.Async(nil, func() interface{} {
-				fmt.Printf("@ todo list event %#v\n", ev)
 				todo := e.Value.(*mydomain.Todo)
 				l.list.AppendTodo(todo)
 				l.AdaptTodoDelegatesFromList()
-				fmt.Printf("@ now del-list = %v\n", l.todoDelegates)
 				return nil
 			})
 		}
 	}
 }
 
-//func (l *TodoListDelegate) AdaptTodoDelegatesFromList(todo *mydomain.Todo) {
-//l.todoDelegates = append(l.todoDelegates, NewTodoDelegate(todo))
 func (l *TodoListDelegate) AdaptTodoDelegatesFromList() {
-	todos := l.list.Todos()
-	if len(l.todoDelegates) < len(todos) {
-		j := len(todos) - len(l.todoDelegates)
-		l.todoDelegates = append(l.todoDelegates, make([]*TodoDelegate, j)...)
-	} else if len(l.todoDelegates) > len(todos) {
-		l.todoDelegates = l.todoDelegates[:len(todos)]
+	if l.todoDelegates == nil {
+		l.todoDelegates = make(map[*mydomain.Todo]*TodoDelegate)
 	}
-	for i := range l.todoDelegates {
-		t := l.todoDelegates[i]
-		if t == nil || t.todo != todos[i] {
-			l.todoDelegates[i] = NewTodoDelegate(todos[i])
+	for _, t := range l.list.Todos() {
+		if _, ok := l.todoDelegates[t]; !ok {
+			l.todoDelegates[t] = NewTodoDelegate(t)
 		}
 	}
 }
 
+func (l *TodoListDelegate) FilterCompleted(doFilter bool) {
+	l.filterCompleted = doFilter
+	l.Async(nil, func() interface{} {
+		return nil
+	})
+}
+
 // --- Rendering -------------------------------------------------------------
 
-type (
-	D = layout.Dimensions
-	C = layout.Context
-)
-
 func TodoList(l *TodoListDelegate) layout.Widget {
+	count := 0
 	todos := make([]layout.Widget, len(l.todoDelegates))
-	for i, todo := range l.todoDelegates {
-		todos[i] = Todo(todo)
+	for _, todo := range l.list.Todos() {
+		if l.filterCompleted && todo.Completed {
+			continue
+		}
+		todos[count] = Todo(l.todoDelegates[todo])
+		count++
 	}
-	return func(gtx C) D {
-		return material.List(html.Theme.Material(), l.state).Layout(gtx, len(todos), func(gtx C, i int) D {
-			return todos[i](gtx)
-		})
+	return func(gtx layout.Context) layout.Dimensions {
+		return material.List(html.Theme.Material(), l.state).Layout(gtx, count,
+			func(gtx layout.Context, i int) layout.Dimensions {
+				return todos[i](gtx)
+			})
 	}
 }
-
-/*
-func H2Todo(t *mydomain.Todo) layout.Widget {
-	return html.H2().Text(t.Title)
-}
-*/

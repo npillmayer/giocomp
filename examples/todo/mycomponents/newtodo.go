@@ -1,8 +1,6 @@
 package mycomponents
 
 import (
-	"fmt"
-
 	"gioui.org/io/event"
 	"gioui.org/io/system"
 	"gioui.org/layout"
@@ -43,7 +41,6 @@ func (c *TodoCreatorDelegate) Event(ev event.Event) {
 		// no update events expected for this component
 	}
 	if c.Clicker().Clicked() {
-		fmt.Println("@ new todo clicked")
 		if title := c.editor.Value(); title != "" {
 			c.working = true
 			c.Async(c.todolist, func() interface{} {

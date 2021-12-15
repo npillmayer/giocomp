@@ -1,8 +1,6 @@
 package components
 
 import (
-	"fmt"
-
 	"gioui.org/io/event"
 	"gioui.org/io/system"
 	"gioui.org/widget"
@@ -43,7 +41,6 @@ func (e *EditorDelegate) Event(event event.Event) {
 		for _, evt := range e.editor.Events() {
 			if _, ok := evt.(widget.ChangeEvent); ok {
 				e.text = e.editor.Text()
-				fmt.Printf("@ editor.text = %q\n", e.text)
 			}
 			if ev, ok := evt.(widget.SubmitEvent); ok {
 				e.text = ev.Text

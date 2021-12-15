@@ -22,6 +22,10 @@ func H2() HeadingStyler {
 	return HeadingStyler{level: 2}
 }
 
+func H3() HeadingStyler {
+	return HeadingStyler{level: 3}
+}
+
 func Title() HeadingStyler {
 	return HeadingStyler{level: 0}
 }
@@ -47,8 +51,10 @@ func (h HeadingStyler) Text(txt string) layout.Widget {
 			label = material.H2(Theme.Material(), txt)
 		case 2:
 			label = material.H3(Theme.Material(), txt)
-		default:
+		case 3:
 			label = material.H4(Theme.Material(), txt)
+		default:
+			label = material.H5(Theme.Material(), txt)
 		}
 		if color != noColor {
 			label.Color = color
