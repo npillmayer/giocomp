@@ -11,7 +11,7 @@ For more complex UI layouts it is advantageous to be able to factor the UI into 
 
 With Svelte, much of this is supported by a compiler, which produces efficient code to alter the DOM. In Go code-generation is common, but I prefer being able to write expressive code on top of smart base objects.
 
-This repo is a test if expressive user-level UI-code can be written for Gio. This is a super rough first sketch, and I will eventually build upon it to grow into something useful.
+This repo is a test if expressive user-level UI-code can be written for Gio. This is a super rough first sketch, and I will eventually build upon it to grow it into something useful.
 
 ### Examples
 
