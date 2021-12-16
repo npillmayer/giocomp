@@ -8,7 +8,7 @@ import (
 	"gioui.org/layout"
 	"github.com/npillmayer/giocomp"
 	"github.com/npillmayer/giocomp/components"
-	"github.com/npillmayer/giocomp/html"
+	"github.com/npillmayer/giocomp/view"
 )
 
 // --- Behaviour -------------------------------------------------------------
@@ -62,9 +62,9 @@ func (c *CounterDelegate) Value() string {
 // --- Rendering -------------------------------------------------------------
 
 func Counter(c *CounterDelegate) layout.Widget {
-	counter := html.Div().Class("level").Class("boxed").Content(
-		html.H2().Class("spaced").Text(c.Value()),
-		html.Button().Class("spaced").Class("is-primary").Text("Count").Bind(c.Clickable),
+	counter := view.Div().Class("level").Class("boxed").Content(
+		view.H2().Class("spaced").Text(c.Value()),
+		view.Button().Class("spaced").Class("is-primary").Text("Count").Bind(c.Clickable),
 	)
 	return components.Enable(!c.working, counter)
 }

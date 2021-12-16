@@ -1,11 +1,11 @@
-package html
+package view
 
 import (
 	"image/color"
 
 	"gioui.org/layout"
 	"gioui.org/widget/material"
-	"github.com/npillmayer/giocomp/html/css"
+	"github.com/npillmayer/giocomp/view/css"
 )
 
 func P() _P {

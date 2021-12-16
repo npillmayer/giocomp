@@ -1,4 +1,4 @@
-package html
+package view
 
 import (
 	"image/color"
@@ -6,7 +6,7 @@ import (
 	"gioui.org/layout"
 	"gioui.org/widget/material"
 	"github.com/npillmayer/giocomp/components"
-	"github.com/npillmayer/giocomp/html/css"
+	"github.com/npillmayer/giocomp/view/css"
 )
 
 func Button() _Button {

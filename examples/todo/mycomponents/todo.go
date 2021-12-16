@@ -11,8 +11,8 @@ import (
 	"gioui.org/widget"
 	"gioui.org/widget/material"
 	"github.com/npillmayer/giocomp/examples/todo/mydomain"
-	"github.com/npillmayer/giocomp/html"
-	"github.com/npillmayer/giocomp/html/css"
+	"github.com/npillmayer/giocomp/view"
+	"github.com/npillmayer/giocomp/view/css"
 )
 
 // --- Behaviour -------------------------------------------------------------
@@ -44,10 +44,10 @@ func (t *TodoDelegate) Event(ev event.Event) {
 func Todo(t *TodoDelegate) layout.Widget {
 	title := t.todo.Title
 	return func(gtx layout.Context) layout.Dimensions {
-		label := html.Div().Class("spaced").Class("level").Content(
-			opaque(material.CheckBox(html.Theme.Material(), t.checkbox, "")),
-			html.Glue(12, 2),
-			html.P().Text(title),
+		label := view.Div().Class("spaced").Class("level").Content(
+			opaque(material.CheckBox(view.Theme.Material(), t.checkbox, "")),
+			view.Glue(12, 2),
+			view.P().Text(title),
 		)
 		return panel(label, t)(gtx)
 	}
@@ -62,9 +62,9 @@ var (
 
 func panel(w layout.Widget, t *TodoDelegate) layout.Widget {
 	return func(gtx layout.Context) layout.Dimensions {
-		cssStyle := css.StylesFromTheme(html.Theme)
+		cssStyle := css.StylesFromTheme(view.Theme)
 		cssStyle.Rounded = true
-		panelStyle := html.PanelStyle{}.WithStyles(cssStyle)
+		panelStyle := view.PanelStyle{}.WithStyles(cssStyle)
 		gtx.Constraints.Max.Y = 120
 		panelStyle.Alignment = layout.Start
 		panelStyle.Border = 1
@@ -92,8 +92,8 @@ func opaque(cb material.CheckBoxStyle) layout.Widget {
 		return stack.Layout(gtx,
 			layout.Stacked(
 				func(gtx layout.Context) layout.Dimensions {
-					dims := html.Rect{
-						Color: html.Theme.Material().Bg,
+					dims := view.Rect{
+						Color: view.Theme.Material().Bg,
 						Size:  f32.Pt(33, 33),
 					}.Layout(gtx)
 					dims.Size.X += 7

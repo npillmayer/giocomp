@@ -6,7 +6,7 @@ import (
 	"gioui.org/io/event"
 	"gioui.org/layout"
 	"github.com/npillmayer/giocomp/components"
-	"github.com/npillmayer/giocomp/html"
+	"github.com/npillmayer/giocomp/view"
 )
 
 // --- Behaviour -------------------------------------------------------------
@@ -42,8 +42,8 @@ func (c *CounterDelegate) Value() string {
 // --- Rendering -------------------------------------------------------------
 
 func Counter(c *CounterDelegate) layout.Widget {
-	return html.Div().Class("level").Class("boxed").Content(
-		html.H2().Class("spaced").Text(c.Value()),
-		html.Button().Class("spaced").Class("is-primary").Text("Count").Bind(c.Clickable),
+	return view.Div().Class("level").Class("boxed").Content(
+		view.H2().Class("spaced").Text(c.Value()),
+		view.Button().Class("spaced").Class("is-primary").Text("Count").Bind(c.Clickable),
 	)
 }

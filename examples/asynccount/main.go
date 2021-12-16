@@ -6,7 +6,7 @@ import (
 	"gioui.org/unit"
 	"github.com/npillmayer/giocomp"
 	"github.com/npillmayer/giocomp/examples/asynccount/counter"
-	"github.com/npillmayer/giocomp/html"
+	html "github.com/npillmayer/giocomp/view"
 )
 
 type myBusinessObject struct {

@@ -6,7 +6,7 @@ import (
 	"gioui.org/unit"
 	"github.com/npillmayer/giocomp"
 	"github.com/npillmayer/giocomp/examples/count/counter"
-	"github.com/npillmayer/giocomp/html"
+	"github.com/npillmayer/giocomp/view"
 )
 
 type myBusinessObject struct {
@@ -14,7 +14,7 @@ type myBusinessObject struct {
 }
 
 type myApplication struct {
-	dom            *html.DOMLayout
+	dom            *view.DOMLayout
 	myBO           *myBusinessObject
 	countUIControl *counter.CounterDelegate
 }
@@ -25,13 +25,13 @@ func (myapp *myApplication) HandleEvent(ev event.Event) {
 
 func (myapp *myApplication) Layout() {
 	myapp.dom.Body().Content(
-		html.Div().Class("spaced").Content(
-			html.H1().Text("Counter"),
-			html.P().Class("highlight").Text("This is an example app for a trivial counter"),
-			html.Glue(30, 30),
-			html.Div().Class("level").Content(
+		view.Div().Class("spaced").Content(
+			view.H1().Text("Counter"),
+			view.P().Class("highlight").Text("This is an example app for a trivial counter"),
+			view.Glue(30, 30),
+			view.Div().Class("level").Content(
 				counter.Counter(myapp.countUIControl),
-				html.HFill(),
+				view.HFill(),
 			),
 		),
 	)
@@ -41,7 +41,7 @@ func (myapp *myApplication) Layout() {
 
 func main() {
 	myapp := myApplication{
-		dom:  html.NewDOM(),
+		dom:  view.NewDOM(),
 		myBO: &myBusinessObject{count: 1},
 	}
 	myapp.countUIControl = counter.New().Bind(&myapp.myBO.count)

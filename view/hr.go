@@ -1,4 +1,4 @@
-package html
+package view
 
 import (
 	"gioui.org/f32"

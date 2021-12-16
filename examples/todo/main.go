@@ -7,7 +7,7 @@ import (
 	"github.com/npillmayer/giocomp"
 	"github.com/npillmayer/giocomp/examples/todo/mycomponents"
 	"github.com/npillmayer/giocomp/examples/todo/mydomain"
-	"github.com/npillmayer/giocomp/html"
+	"github.com/npillmayer/giocomp/view"
 )
 
 type myBusinessObject struct {
@@ -15,7 +15,7 @@ type myBusinessObject struct {
 }
 
 type myApplication struct {
-	dom               *html.DOMLayout
+	dom               *view.DOMLayout
 	myBO              *myBusinessObject
 	newToDoUIControl  *mycomponents.TodoCreatorDelegate
 	todoListUIControl *mycomponents.TodoListDelegate
@@ -32,18 +32,18 @@ func (myapp *myApplication) HandleEvent(ev event.Event) {
 
 func (myapp *myApplication) Layout() {
 	myapp.dom.Body().Content(
-		html.Div().Class("spaced").Content(
-			html.H3().Text("Your ToDos"),
-			html.P().Class("highlight").Text("This is an example app collecting ToDos"),
-			html.Glue(30, 30),
-			html.Div().Class("level").Content(
+		view.Div().Class("spaced").Content(
+			view.H3().Text("Your ToDos"),
+			view.P().Class("highlight").Text("This is an example app collecting ToDos"),
+			view.Glue(30, 30),
+			view.Div().Class("level").Content(
 				mycomponents.TodoCreate(myapp.newToDoUIControl),
 			),
-			html.Glue(20, 20),
-			html.Hr(),
-			html.Glue(20, 20),
+			view.Glue(20, 20),
+			view.Hr(),
+			view.Glue(20, 20),
 			mycomponents.Filter(myapp.filterUIControl),
-			html.Glue(10, 10),
+			view.Glue(10, 10),
 			mycomponents.TodoList(myapp.todoListUIControl),
 		),
 	)
@@ -53,7 +53,7 @@ func (myapp *myApplication) Layout() {
 
 func main() {
 	myapp := myApplication{
-		dom: html.NewDOM(),
+		dom: view.NewDOM(),
 		myBO: &myBusinessObject{
 			todos: mydomain.NewTodoList(),
 		},

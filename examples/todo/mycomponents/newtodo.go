@@ -7,7 +7,7 @@ import (
 	"github.com/npillmayer/giocomp"
 	"github.com/npillmayer/giocomp/components"
 	"github.com/npillmayer/giocomp/examples/todo/mydomain"
-	"github.com/npillmayer/giocomp/html"
+	"github.com/npillmayer/giocomp/view"
 )
 
 // --- Behaviour -------------------------------------------------------------
@@ -65,8 +65,8 @@ func (c *TodoCreatorDelegate) Value() *mydomain.Todo {
 // --- Rendering -------------------------------------------------------------
 
 func TodoCreate(c *TodoCreatorDelegate) layout.Widget {
-	return html.Div().Class("level").Content(
-		html.TextInput().Class("spaced").Class("boxed").Hint(defaultToDoLabelHint).Bind(c.editor),
-		html.Button().Class("spaced").Class("is-primary").Text("Add").Bind(c.Clickable),
+	return view.Div().Class("level").Content(
+		view.TextInput().Class("spaced").Class("boxed").Hint(defaultToDoLabelHint).Bind(c.editor),
+		view.Button().Class("spaced").Class("is-primary").Text("Add").Bind(c.Clickable),
 	)
 }

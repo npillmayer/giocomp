@@ -9,7 +9,7 @@ import (
 	"github.com/npillmayer/giocomp"
 	"github.com/npillmayer/giocomp/components"
 	"github.com/npillmayer/giocomp/examples/todo/mydomain"
-	"github.com/npillmayer/giocomp/html"
+	"github.com/npillmayer/giocomp/view"
 )
 
 // --- Behaviour -------------------------------------------------------------
@@ -86,7 +86,7 @@ func TodoList(l *TodoListDelegate) layout.Widget {
 		count++
 	}
 	return func(gtx layout.Context) layout.Dimensions {
-		return material.List(html.Theme.Material(), l.state).Layout(gtx, count,
+		return material.List(view.Theme.Material(), l.state).Layout(gtx, count,
 			func(gtx layout.Context, i int) layout.Dimensions {
 				return todos[i](gtx)
 			})

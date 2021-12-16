@@ -1,10 +1,10 @@
-package html
+package view
 
 import (
 	"strings"
 
 	"gioui.org/layout"
-	"github.com/npillmayer/giocomp/html/css"
+	"github.com/npillmayer/giocomp/view/css"
 )
 
 func Div() _Div {

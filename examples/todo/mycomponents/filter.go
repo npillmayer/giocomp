@@ -6,7 +6,7 @@ import (
 	"gioui.org/layout"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
-	"github.com/npillmayer/giocomp/html"
+	"github.com/npillmayer/giocomp/view"
 )
 
 // --- Behaviour -------------------------------------------------------------
@@ -42,9 +42,9 @@ func (f *FilterDelegate) Event(ev event.Event) {
 // --- Rendering -------------------------------------------------------------
 
 func Filter(t *FilterDelegate) layout.Widget {
-	filter := material.Switch(html.Theme.Material(), t.checkbox, "")
-	return html.Div().Class("level").Content(
+	filter := material.Switch(view.Theme.Material(), t.checkbox, "")
+	return view.Div().Class("level").Content(
 		filter.Layout,
-		html.P().Class("spaced").Text("hide completed"),
+		view.P().Class("spaced").Text("hide completed"),
 	)
 }

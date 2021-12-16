@@ -1,4 +1,4 @@
-package html
+package view
 
 import (
 	"image"
@@ -9,7 +9,7 @@ import (
 	"gioui.org/op/clip"
 	"gioui.org/op/paint"
 	"gioui.org/unit"
-	"github.com/npillmayer/giocomp/html/css"
+	"github.com/npillmayer/giocomp/view/css"
 )
 
 // Adapted copy from:
