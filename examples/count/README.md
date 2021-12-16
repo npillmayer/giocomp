@@ -7,19 +7,21 @@ This little example is mainly about exploring a way of expressing the visual rep
 
 ### Building the View Tree
 
-Gio is very flexible and it is possible to do *anything* related UI graphics with it. However, building the visual tree assembles nested creation of objects and function calls (often closures), which quickly becomes tedious.
+Gio is very flexible and it is possible to do *anything* related to UI graphics with it. However, building the visual tree assembles nested objects and function calls (often closures), which quickly becomes tedious.
 
-One way of simplifying tedious nested function calls is to make is possible to chain them. So instead of 
+One way of simplifying nested function calls is to make is possible to chain them. So instead of 
 
 ```Go
+    var my DomainObject
+
     Layout(context) dimensions {
         property1 := …
         container{axis: V}.Layout(context, property1) {
-            widget1(context),
+            widget1(context, &my),
             func(context) dimensions {
                 property2 := …
                 text := "…"
-                widget2(context, property2, text)
+                return widget2(context, property2, text)
             }
         }
     }
@@ -28,9 +30,11 @@ One way of simplifying tedious nested function calls is to make is possible to c
 we may prefer typing something like this:
 
 ```Go
+    var my DomainObject
+
     layout().Content(
         container().Axis(V).Prop(…).Content(
-            widget1(),
+            widget1().Bind(&my),
             widget2().Prop(…).Text("…")
         )
     )
